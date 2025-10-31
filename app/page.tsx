@@ -5,7 +5,7 @@ import { events } from "@/lib/constants";
 const Home = () => {
   return (
     <section>
-      <h1 className="text-center">
+      <h1 className="text-center mt-20">
         The Hub for every Dev <br />
         Event you Can&apos;t miss
       </h1>
