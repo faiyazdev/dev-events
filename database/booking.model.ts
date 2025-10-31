@@ -30,8 +30,8 @@ const bookingSchema = new Schema<Booking, BookingModel>(
   { timestamps: true, versionKey: false }
 );
 
-// Index to speed up queries by event
-bookingSchema.index({ eventId: 1 });
+// Prevent duplicate bookings for the same attendee+event and keep lookups fast
+bookingSchema.index({ eventId: 1, email: 1 }, { unique: true });
 
 // Pre-save: ensure referenced Event exists and email is valid/normalized
 bookingSchema.pre('save', async function (next) {
