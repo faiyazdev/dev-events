@@ -3,17 +3,17 @@ import { Event } from './event.model';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export interface Booking {
+export interface IBooking {
   eventId: Types.ObjectId; // FK -> Event
   email: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export type BookingDocument = HydratedDocument<Booking>;
-export interface BookingModel extends Model<Booking> {}
+export type BookingDocument = HydratedDocument<IBooking>;
+export type BookingModel = Model<IBooking>;
 
-const bookingSchema = new Schema<Booking, BookingModel>(
+const bookingSchema = new Schema<IBooking, BookingModel>(
   {
     eventId: { type: Schema.Types.ObjectId, ref: 'Event', required: true, index: true },
     email: {
@@ -55,4 +55,4 @@ bookingSchema.pre('save', async function (next) {
   }
 });
 
-export const Booking = (models.Booking as BookingModel | undefined) ?? model<Booking, BookingModel>('Booking', bookingSchema);
+export const Booking = (models.Booking as BookingModel | undefined) ?? model<IBooking, BookingModel>('Booking', bookingSchema);

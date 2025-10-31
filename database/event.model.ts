@@ -25,7 +25,7 @@ const normalizeDate = (input: string): string => {
 
 // Normalize time to 24h HH:mm; accepts "9", "9:30", "9pm", "9:30 PM", "21:30"
 const normalizeTime = (input: string): string => {
-  let s = input.trim().toLowerCase().replace(/\s+/g, ' ');
+  const s = input.trim().toLowerCase().replace(/\s+/g, ' ');
   const ampm = s.match(/^(\d{1,2})(?::(\d{2}))?\s*([ap]m)$/i);
   if (ampm) {
     let hh = parseInt(ampm[1]!, 10);
@@ -51,7 +51,7 @@ const normalizeTime = (input: string): string => {
   throw new Error('Invalid time');
 };
 
-export interface Event {
+export interface IEvent {
   title: string;
   slug: string;
   description: string;
@@ -70,8 +70,8 @@ export interface Event {
   updatedAt: Date;
 }
 
-export type EventDocument = HydratedDocument<Event>;
-export interface EventModel extends Model<Event> {}
+export type EventDocument = HydratedDocument<IEvent>;
+export type EventModel = Model<IEvent>;
 
 const nonEmpty = {
   validator: isNonEmptyString,
@@ -83,10 +83,10 @@ const nonEmptyStringArray = {
   message: '{PATH} must be a non-empty array of non-empty strings',
 };
 
-const eventSchema = new Schema<Event, EventModel>(
+const eventSchema = new Schema<IEvent, EventModel>(
   {
     title: { type: String, required: true, trim: true, validate: nonEmpty },
-    slug: { type: String, required: true, unique: true, index: true }, // unique index for SEO-friendly URLs
+    slug: { type: String, unique: true, index: true }, // unique index for SEO-friendly URLs
     description: { type: String, required: true, trim: true, validate: nonEmpty },
     overview: { type: String, required: true, trim: true, validate: nonEmpty },
     image: { type: String, required: true, trim: true, validate: nonEmpty },
@@ -122,7 +122,7 @@ eventSchema.pre('save', function (next) {
     }
 
     // Extra safeguard: ensure required strings/arrays are non-empty after trimming
-    const requiredStrings: Array<keyof Event> = [
+    const requiredStrings: Array<keyof IEvent> = [
       'title','description','overview','image','venue','location','mode','audience','organizer'
     ];
     for (const key of requiredStrings) {
@@ -138,4 +138,4 @@ eventSchema.pre('save', function (next) {
   }
 });
 
-export const Event = (models.Event as EventModel | undefined) ?? model<Event, EventModel>('Event', eventSchema);
+export const Event = (models.Event as EventModel | undefined) ?? model<IEvent, EventModel>('Event', eventSchema);
